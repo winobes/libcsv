@@ -1,33 +1,84 @@
 # libscv #
 
-Simple C library for parsing and writing CSV files.
+A simple C library for parsing and writing CSV files.
 
 ## Description ##
 
-This is a little C library for loading, manipulating, and saving CSV files. 
+This is a tiny C library that can load, manipulate, and save CSV data. 
 
-Examples and source files can be found on [github](https://github.com/winobes/libscv).
+Examples and source files can be found on 
+[github](https://github.com/winobes/libscv).
 
 I feel some obligation to say that there are certainly more robust C 
 libraries out there for CSV and other plain text "flat files" (e.g. the one 
-found [here](https://github.com/robertpostill/libCSV)  which has a customizable parser and malformed data flexibility). 
+found [here](https://github.com/robertpostill/libCSV)  which has a 
+customizable parser and malformed data flexibility).
+
+The buffers that hold CSV data are very minimal in memory, that is, they do 
+not allocate any more memory than they need. This might be a nice feature, 
+but it also means frequent calls to realloc when fields are added and
+subtracted, so bear that in mind where performance is paramount.
 
 I am a beginner C programmer, and writing and implementing this library is 
-primairly an exercise for me. Any feedback is much appreciated. You can 
+primairly an exercise for me. Any feedback is very much appreciated. You can 
 contact me at <winobes@gmail.com>.
 
 ## Usage ##
 
 This library is designed to be very simple to use. The CSV format is 
 not very well standardized, and not all CSV files will be read properly
-by the parser. It should be able to handle any file that it creates,
-and any file that adheres to the following rules:
+by the parser, but it should at least be able to handle any file that 
+it creates, and any file that adheres to the following rules:
+
+* Rows are separated by a newline character.
+* Fields containing any of the following characters are wrapped in text 
+deliminators:
+  * field deliminator
+  * text deliminator
+  * newline character
+* Any text deliminator in the field is escaped by a preceeding text 
+deliminator (note that field deliminators and newline characters should 
+not be escaped).
+
+Also take note of the these quirks:
+
+* If a field is set off by text deliminators, but there are characters 
+hanging around outside of those text deliminators (but inside the field 
+deliminators), they are ignored.
+* A field deliminator at the end of a row will cause the parser to 
+interpret a trailing blank field (it expects that rows end with just a 
+newline character)
+* However, newline character at the end of the last line will _not_ 
+beinterpreted as an empty trailing row. This is because some UNIX systems 
+automatically add a newline character immediately before EOF.
+
+This program demonstrates all of the defined functions:
 
 ```c
+int main () {
+
+/* Initializing the buffer... Uninialized
+ * buffers will cause errors. */
+  CSV_BUFFER *my_buffer = csv_create_buffer();
+  
+  /* TODO: Finish this program */
+
+/* To avoid memory leaks, be sure to destroy 
+ * buffers when you are done with them: */
+  csv_destroy_buffer(my_buffer);
+  
+return 0;
+}
 ```
 
 
 ## Installation ##
+
+## TODO ##
+* Write some example programs
+* Conform non-zero return behavior for adding a row and adding a field
+* Create a makefile
+* Finish usage and intsallation documentation
 
 ## License - WTFPL ##
 
