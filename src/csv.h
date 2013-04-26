@@ -1,6 +1,9 @@
 #ifndef _CSV_H
 #define _CSV_H
 
+#include <stdlib.h>
+#include <stdio.h>
+
 typedef struct CSV_FIELD {
         char *text;
         size_t length;
@@ -25,7 +28,7 @@ typedef struct CSV_BUFFER {
  * 0: success
  * 1: realloc failure
  */
-int add_char(char **string, int *c, char ch);
+static int add_char(char **string, int *c, char ch);
 
 /* Function: create_field 
  * ------------------------
@@ -34,7 +37,7 @@ int add_char(char **string, int *c, char ch);
  * 
  * Returns NULL on error via malloc.
  */
-CSV_FIELD *create_field();
+static CSV_FIELD *create_field();
 
 /* Function: destroy_field
  * ---------------------------
@@ -46,7 +49,7 @@ CSV_FIELD *create_field();
  * 0: success
  * 1: error realloc'ing field's char array
  */
-void destroy_field(CSV_FIELD *field);
+static void destroy_field(CSV_FIELD *field);
 
 /* Function: set_field
  * -----------------------
@@ -57,7 +60,7 @@ void destroy_field(CSV_FIELD *field);
  *  0: success
  *  1: error allocating space to the string
  */
-int set_field(CSV_FIELD *field, char *text);
+static int set_field(CSV_FIELD *field, char *text);
 
 /* Function: csv_create_buffer
  * ---------------------------
@@ -66,14 +69,14 @@ int set_field(CSV_FIELD *field, char *text);
  * Sets the number of rows to 0
  * Sets Text Delim to '"' and field delim to ',' by default.
  */
-static void CSV_BUFFER *csv_create_buffer();
+CSV_BUFFER *csv_create_buffer();
 
 /* Function: csv_destroy_buffer
  * ----------------------------
  * Frees memory allocated by csv_create_buffer and any fields
  * that are part of the buffer.
  */
-static void csv_destroy_buffer();
+void csv_destroy_buffer();
 
 /* Function: append_row
  * -------------------------------
@@ -86,7 +89,7 @@ static void csv_destroy_buffer();
  * 1: error allocating width memory
  * 2: error allocating field memory
  */
-int append_row(CSV_BUFFER *stream);
+static int append_row(CSV_BUFFER *stream);
 
 /* Function: append_field
  * ---------------------------------
@@ -98,7 +101,7 @@ int append_row(CSV_BUFFER *stream);
  * 1: the given row does not extist
  * 2: memory allocation error 
  */
-int append_field(CSV_BUFFER *buffer, size_t row);
+static int append_field(CSV_BUFFER *buffer, size_t row);
 
 /* Function: remove_last_field
  * -------------------------------
@@ -109,7 +112,7 @@ int append_field(CSV_BUFFER *buffer, size_t row);
  *  1: the requested row is already empty
  *  2: the requested row does not exist
  */
-int remove_last_field(CSV_BUFFER *buffer, size_t row);
+static int remove_last_field(CSV_BUFFER *buffer, size_t row);
 
 /* Function: remove_last_row
  * -----------------------------
@@ -118,7 +121,7 @@ int remove_last_field(CSV_BUFFER *buffer, size_t row);
  * Returns:
  *  0: success
  */
-int remove_last_row(CSV_BUFFER *buffer);
+static int remove_last_row(CSV_BUFFER *buffer);
 
 /* Function: read_next_field
  * -----------------------------
@@ -141,7 +144,7 @@ int remove_last_row(CSV_BUFFER *buffer);
  *  1: The next entry is on a new row 
  *  2: There is no next entry (EOF)
  */
-int read_next_field(FILE *fp,
+static int read_next_field(FILE *fp,
                 char field_delim, char text_delim, 
                 CSV_FIELD *field);
 
@@ -154,7 +157,7 @@ int read_next_field(FILE *fp,
  *  1: file not found
  *  2: failure to resize buffer (memory failure)
  */
-static int csv_load(CSV_BUFFER *buffer, char *file_name);
+int csv_load(CSV_BUFFER *buffer, char *file_name);
 
 /* Function: csv_save
  * -----------------------
@@ -166,7 +169,7 @@ static int csv_load(CSV_BUFFER *buffer, char *file_name);
  *  1: unable to write to file (invalid name or inufficient
  *     access)
  */
-static int csv_save(char *file_name, CSV_BUFFER *buffer);
+int csv_save(char *file_name, CSV_BUFFER *buffer);
 
 /* Function: csv_copy_row
  * ----------------------
@@ -178,7 +181,7 @@ static int csv_save(char *file_name, CSV_BUFFER *buffer);
  *  0: success
  *  1: the requested src row does not exist
  */
-static int csv_copy_row(CSV_BUFFER *dest, int dest_row,
+int csv_copy_row(CSV_BUFFER *dest, int dest_row,
                         CSV_BUFFER *src, int src_row);
 
 /* Function: copy_field
@@ -191,7 +194,7 @@ static int csv_copy_row(CSV_BUFFER *dest, int dest_row,
  *  0: success
  *  1: memory error (see set_field)
  */
-static int csv_copy_field(CSV_BUFFER *dest, int dest_row, int dest_entry,
+int csv_copy_field(CSV_BUFFER *dest, int dest_row, int dest_entry,
                    CSV_BUFFER *source, int source_row, int source_entry);
 
 
@@ -208,7 +211,7 @@ static int csv_copy_field(CSV_BUFFER *dest, int dest_row, int dest_entry,
  *  2: the request cell was empty (or does not exist)
  *  3: the length given was 0
  */
-static int csv_get_field(char *dest, CSV_BUFFER *src, 
+int csv_get_field(char *dest, CSV_BUFFER *src, 
                 size_t dest_len, size_t row, size_t entry);
 
 /* Function: csv_clear_field
@@ -222,7 +225,7 @@ static int csv_get_field(char *dest, CSV_BUFFER *src,
  *  0: success
  *  TODO errors
  */
-static int csv_clear_field(CSV_BUFFER *buffer, size_t row, size_t entry);
+int csv_clear_field(CSV_BUFFER *buffer, size_t row, size_t entry);
 
 /* Function: csv_clear_row
  * -----------------------
@@ -235,7 +238,7 @@ static int csv_clear_field(CSV_BUFFER *buffer, size_t row, size_t entry);
  *  1: memory allocation falirure (note this function only 
  *      reduces memory used, so reallocation should never fail)
  */
-static int csv_clear_row(CSV_BUFFER *buffer, size_t row);
+int csv_clear_row(CSV_BUFFER *buffer, size_t row);
 
 /* Function: csv_remove_row
  * ------------------------
@@ -249,16 +252,16 @@ static int csv_clear_row(CSV_BUFFER *buffer, size_t row);
  *  1: memory allocation falirure (note this function only 
  *      reduces memory used, so reallocation should never fail)
  */
-static int csv_remove_row(CSV_BUFFER *buffer, size_t row);
+int csv_remove_row(CSV_BUFFER *buffer, size_t row);
 
-static void csv_set_text_delim(CSV_BUFFER *buffer, char new_delim);
+void csv_set_text_delim(CSV_BUFFER *buffer, char new_delim);
 
-static void csv_set_field_delim(CSV_BUFFER *buffer, char new_delim);
+void csv_set_field_delim(CSV_BUFFER *buffer, char new_delim);
 
-static int csv_get_height(CSV_BUFFER *buffer);
+int csv_get_height(CSV_BUFFER *buffer);
 /* Returns: height of buffer */
 
-static int csv_get_width(CSV_BUFFER *bufer, size_t row);
+int csv_get_width(CSV_BUFFER *bufer, size_t row);
 /* Returns: width of row (or 0 if row does not exist) */
 
 #endif /* CSV_H_ */

@@ -1,10 +1,9 @@
 #include "csv.h"
 #include <stdio.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
 
-int add_char(char **string, int *c, char ch)
+static int add_char(char **string, int *c, char ch)
 {
         char *tmp = NULL;
         (*c)++;
@@ -18,7 +17,7 @@ int add_char(char **string, int *c, char ch)
         return 0;
 }
 
-CSV_FIELD *create_field()
+static CSV_FIELD *create_field()
 {
         CSV_FIELD *field = malloc(sizeof(CSV_FIELD));
         field->length = 0;
@@ -27,7 +26,7 @@ CSV_FIELD *create_field()
         return field;
 }
 
-void destroy_field(CSV_FIELD *field)
+static void destroy_field(CSV_FIELD *field)
 {
         if (field->text != NULL) {
                 free(field->text);
@@ -37,7 +36,7 @@ void destroy_field(CSV_FIELD *field)
         field = NULL;
 } 
 
-int set_field(CSV_FIELD *field, char *text)
+static int set_field(CSV_FIELD *field, char *text)
 {
         
         char *tmp;
@@ -52,7 +51,7 @@ int set_field(CSV_FIELD *field, char *text)
         return 0;
 }
 
-int read_next_field(FILE *fp,
+static int read_next_field(FILE *fp,
                 char field_delim, char text_delim, 
                 CSV_FIELD *field)
 {
@@ -145,7 +144,7 @@ int read_next_field(FILE *fp,
         return retval;
 }
 
-int append_field(CSV_BUFFER *buffer, size_t row)
+static int append_field(CSV_BUFFER *buffer, size_t row)
 {
 
         CSV_FIELD **temp_field;
@@ -169,7 +168,7 @@ int append_field(CSV_BUFFER *buffer, size_t row)
         return 0;
 }
 
-int append_row(CSV_BUFFER *buffer)
+static int append_row(CSV_BUFFER *buffer)
 {
         size_t *temp_width;
         CSV_FIELD ***temp_field;
@@ -201,7 +200,7 @@ int append_row(CSV_BUFFER *buffer)
         return 0;
 }
 
-int remove_last_field(CSV_BUFFER *buffer, size_t row)
+static int remove_last_field(CSV_BUFFER *buffer, size_t row)
 {
 
         size_t entry = buffer->width[row] - 1;
@@ -241,7 +240,7 @@ int remove_last_field(CSV_BUFFER *buffer, size_t row)
         return 0;
 }
 
-int remove_last_row(CSV_BUFFER *buffer)
+static int remove_last_row(CSV_BUFFER *buffer)
 {
 
         int row = buffer->rows - 1;
@@ -269,7 +268,7 @@ int remove_last_row(CSV_BUFFER *buffer)
         return 0;
 }
  
-static CSV_BUFFER *csv_create_buffer()
+CSV_BUFFER *csv_create_buffer()
 {
 
         CSV_BUFFER *buffer = malloc(sizeof(CSV_BUFFER));
@@ -285,7 +284,7 @@ static CSV_BUFFER *csv_create_buffer()
         return buffer;
 }
 
-static void csv_destroy_buffer(CSV_BUFFER *buffer)
+void csv_destroy_buffer(CSV_BUFFER *buffer)
 {
 
         int i, j;
@@ -307,7 +306,7 @@ static void csv_destroy_buffer(CSV_BUFFER *buffer)
         free(buffer);
 }
 
-static int csv_load(CSV_BUFFER *buffer, char *file_name)
+int csv_load(CSV_BUFFER *buffer, char *file_name)
 {
 
         FILE *fp = fopen(file_name, "r");
@@ -351,7 +350,7 @@ static int csv_load(CSV_BUFFER *buffer, char *file_name)
         return 0;
 }
 
-static int csv_save(char *file_name, CSV_BUFFER *buffer)
+int csv_save(char *file_name, CSV_BUFFER *buffer)
 {
 
         int i, j, k;
@@ -397,8 +396,8 @@ static int csv_save(char *file_name, CSV_BUFFER *buffer)
         return 0;
 }
 
-static int csv_get_field(char *dest, CSV_BUFFER *src, 
-                                size_t dest_len, size_t row, size_t entry)
+int csv_get_field(char *dest, CSV_BUFFER *src, 
+        size_t dest_len, size_t row, size_t entry)
 {
         int i;
         if (dest_len == 0)
@@ -431,14 +430,14 @@ static int csv_get_field(char *dest, CSV_BUFFER *src,
                 return 0;
 }
 
-static int csv_copy_field(CSV_BUFFER *dest, int dest_row, int dest_entry,
+int csv_copy_field(CSV_BUFFER *dest, int dest_row, int dest_entry,
                    CSV_BUFFER *source, int source_row, int source_entry)
 {
         return set_field(dest->field[dest_row][dest_entry],
                         source->field[source_row][source_entry]->text);
 }
 
-static int csv_clear_field(CSV_BUFFER *buffer, size_t row, size_t entry)
+int csv_clear_field(CSV_BUFFER *buffer, size_t row, size_t entry)
 {
         /* Field is already clear (out of range) */
         if (buffer->rows < row + 1 || buffer->width[row] < entry + 1)
@@ -454,7 +453,7 @@ static int csv_clear_field(CSV_BUFFER *buffer, size_t row, size_t entry)
         return 0; 
 }
 
-static int csv_clear_row(CSV_BUFFER *buffer, size_t row)
+int csv_clear_row(CSV_BUFFER *buffer, size_t row)
 {
 
         CSV_FIELD **temp_row;
@@ -492,7 +491,7 @@ static int csv_clear_row(CSV_BUFFER *buffer, size_t row)
         return 0;
 }
 
-static int csv_copy_row(CSV_BUFFER *dest, int dest_row, 
+int csv_copy_row(CSV_BUFFER *dest, int dest_row, 
                         CSV_BUFFER *source, int source_row)
 {
 
@@ -520,7 +519,7 @@ static int csv_copy_row(CSV_BUFFER *dest, int dest_row,
         return 0;
 }
 
-static int csv_remove_row(CSV_BUFFER *buffer, size_t row)
+int csv_remove_row(CSV_BUFFER *buffer, size_t row)
 {
 
         if(row > buffer->rows - 1)
@@ -535,7 +534,7 @@ static int csv_remove_row(CSV_BUFFER *buffer, size_t row)
 
 }
 
-static int csv_remove_field(CSV_BUFFER *buffer, size_t row, size_t entry)
+int csv_remove_field(CSV_BUFFER *buffer, size_t row, size_t entry)
 {
         if (row > buffer->rows - 1 || entry > buffer->width[row] - 1)
                 return 0;
@@ -548,54 +547,25 @@ static int csv_remove_field(CSV_BUFFER *buffer, size_t row, size_t entry)
         return 0;
 }
 
-static void csv_set_text_delim(CSV_BUFFER *buffer, char new_delim)
+void csv_set_text_delim(CSV_BUFFER *buffer, char new_delim)
 {
         buffer->text_delim = new_delim;
 }
 
-static void csv_set_field_delim(CSV_BUFFER *buffer, char new_delim)
+void csv_set_field_delim(CSV_BUFFER *buffer, char new_delim)
 {
         buffer->field_delim = new_delim;
 }
 
-static int csv_get_height(CSV_BUFFER *buffer)
+int csv_get_height(CSV_BUFFER *buffer)
 {
         return buffer->rows;
 }
 
-static int csv_get_width(CSV_BUFFER *buffer, size_t row)
+int csv_get_width(CSV_BUFFER *buffer, size_t row)
 {
         if (row > buffer->rows - 1)
                 return 0;
         else 
                 return buffer->width[row];
-} 
-/* debugging and testing purposes only
-void print_buffer(CSV_BUFFER *buffer)
-
-{
-        int i, j;
-        printf("\n");
-        for (i = 0; i < buffer->rows; i++) {
-        for (j = 0; j < buffer->width[i]; j++) {
-                printf("%c%s%c%c", buffer->text_delim, buffer->field[i][j]->text, buffer->text_delim, buffer->field_delim);
-        }
-        printf("\n");
-        }
-        printf("\n\n");
-} 
-
-int main () {
-        CSV_BUFFER *my_buffer = csv_create_buffer();
-
-        csv_load(my_buffer, "../examples/testlist.csv");
-
-        csv_copy_row(my_buffer, 1, my_buffer, 17);
-        print_buffer(my_buffer);
-
-        csv_save("testsave.csv", my_buffer);
-
-        csv_destroy_buffer(my_buffer);
-
-        return 0;
-}*/
+}
