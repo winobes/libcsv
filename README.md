@@ -14,12 +14,12 @@ libraries out there for CSV and other plain text "flat files" (e.g. the one
 found [here](https://github.com/robertpostill/libCSV)  which has a 
 customizable parser and malformed data flexibility).
 
-The buffers that hold CSV data are very minimal in memory, that is, they do 
-not allocate any more memory than they need. This might be a nice feature, 
-but it also means frequent calls to realloc when fields are added and
+The CSV buffers in this implimentation are very minimal in memory, that is, 
+they do not allocate any more memory than they need. This might be a nice 
+feature, but it also means frequent calls to realloc when fields are added and
 subtracted, so bear that in mind where performance is paramount.
 
-I am a beginner C programmer, and writing and implementing this library is 
+I am a beginner C programmer, and writing and documenting this library is 
 primairly an exercise for me. Any feedback is very much appreciated. You can 
 contact me at <winobes@gmail.com>.
 
@@ -52,30 +52,13 @@ newline character)
 beinterpreted as an empty trailing row. This is because some UNIX systems 
 automatically add a newline character immediately before EOF.
 
-This program demonstrates all of the defined functions:
-
-```c
-int main () {
-
-/* Initializing the buffer... Uninialized
- * buffers will cause errors. */
-  CSV_BUFFER *my_buffer = csv_create_buffer();
-  
-  /* TODO: Finish this program */
-
-/* To avoid memory leaks, be sure to destroy 
- * buffers when you are done with them: */
-  csv_destroy_buffer(my_buffer);
-  
-return 0;
-}
-```
-
-
 ## Installation ##
 
 ## TODO ##
-* Write some example programs
+* Add some critical functions:
+        * csv_set_field
+        * csv_insert_field
+* Write some example programs/function documentation
 * Conform non-zero return behavior for adding a row and adding a field
 * Create a makefile
 * Finish usage and intsallation documentation
