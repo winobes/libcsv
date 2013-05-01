@@ -89,7 +89,7 @@ void csv_destroy_buffer();
  * 1: error allocating width memory
  * 2: error allocating field memory
  */
-static int append_row(CSV_BUFFER *stream);
+static int append_row(CSV_BUFFER *buffer);
 
 /* Function: append_field
  * ---------------------------------
@@ -263,5 +263,13 @@ int csv_get_height(CSV_BUFFER *buffer);
 
 int csv_get_width(CSV_BUFFER *bufer, size_t row);
 /* Returns: width of row (or 0 if row does not exist) */
+
+int csv_get_field_length(CSV_BUFFER *buffer, size_t row, size_t entry);
+
+int csv_set_field(CSV_BUFFER *buffer, size_t row, size_t entry,
+        char *field);
+
+int csv_insret_field(CSV_BUFFER *buffer, size_t row, size_t entry,
+        char *field);
 
 #endif /* CSV_H_ */

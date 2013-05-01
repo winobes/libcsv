@@ -569,3 +569,45 @@ int csv_get_width(CSV_BUFFER *buffer, size_t row)
         else 
                 return buffer->width[row];
 }
+
+int csv_get_field_length(CSV_BUFFER *buffer, size_t row, size_t entry)
+{
+       return buffer->field[row][entry]->length - 1;
+}
+
+int csv_set_field(CSV_BUFFER *buffer, size_t row, size_t entry,
+                char *field)
+{
+
+        while (row >= buffer->rows) {
+                append_row(buffer);
+        }
+        while (entry >= buffer->width[row])
+                append_field(buffer, row);
+
+        if (set_field(buffer->field[row][entry], field) == 0)
+                return 0;
+        else 
+                return 1;
+}
+
+int csv_insert_field(CSV_BUFFER *buffer, size_t row, size_t entry,
+                char *field)
+{
+        /* If the field does not exist, simply set it */
+        if (row > buffer->rows - 1
+                || entry > buffer->width[row] - 1)
+                csv_set_field(buffer, row, entry, field);
+
+        /* Otherwise move everything over, then set it */
+        else {
+                append_field(buffer, row);
+                int i = 0;
+                for (i = buffer->width[row] - 1; i > entry; i--)
+                        csv_copy_field(buffer, row, i,
+                                        buffer, row, i-1);
+                csv_set_field(buffer,row,entry,field);
+        }
+
+        return 0;
+}
