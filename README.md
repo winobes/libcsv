@@ -58,6 +58,7 @@ automatically add a newline character immediately before EOF.
 * Add some critical functions:
 	* csv_set_field()
 	* csv_instert_field()
+	* csv_get_field_length()
 * Write some example programs/function documentation
 * Conform non-zero return behavior for adding a row and adding a field
 * Create a makefile
