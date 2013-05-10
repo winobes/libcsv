@@ -571,7 +571,13 @@ int csv_get_width(CSV_BUFFER *buffer, size_t row)
 
 int csv_get_field_length(CSV_BUFFER *buffer, size_t row, size_t entry)
 {
-       return buffer->field[row][entry]->length - 1;
+
+        if (row > buffer->rows - 1)
+                return 0;
+        else if (entry > buffer->width[row] - 1)
+                return 0;
+        else 
+                return buffer->field[row][entry]->length - 1;
 }
 
 int csv_set_field(CSV_BUFFER *buffer, size_t row, size_t entry,
