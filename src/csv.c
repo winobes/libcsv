@@ -406,7 +406,7 @@ int csv_get_field(char *dest, size_t dest_len,
             || row < 0
             || entry >= src->width[row] /*entry does not exist*/
             || entry < 0) {
-                for (i = 0; i < dest_len; i++)
+                for (i = 0; i < dest_len + 1; i++)
                         dest[0] = '\0';
                 /* If the requested entry does not exist or is
                  * invalid, we clear the string provided consistent
@@ -418,11 +418,10 @@ int csv_get_field(char *dest, size_t dest_len,
         /* Destination is not large enough to hold the whole entry,
          * but strncpy will truncate it for us. 
          */
-                
         strncpy(dest, src->field[row][entry]->text, dest_len);
         dest[dest_len + 1] = '\0';
 
-        if (src->field[row][entry]->length + 1 > dest_len)
+        if (src->field[row][entry]->length > dest_len + 1)
                 return 1;
         if (src->field[row][entry]->length == 0)
                 return 2;
