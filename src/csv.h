@@ -211,8 +211,8 @@ int csv_copy_field(CSV_BUFFER *dest, int dest_row, int dest_entry,
  *  2: the request cell was empty (or does not exist)
  *  3: the length given was 0
  */
-int csv_get_field(char *dest, CSV_BUFFER *src, 
-                size_t dest_len, size_t row, size_t entry);
+int csv_get_field(char *dest, size_t dest_len, 
+        CSV_BUFFER *src, size_t row, size_t entry);
 
 /* Function: csv_clear_field
  * -------------------------

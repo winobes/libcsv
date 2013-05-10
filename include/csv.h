@@ -18,8 +18,8 @@ void csv_set_field_delim(CSV_BUFFER *buffer, char new_delim);
 int csv_get_height(CSV_BUFFER *buffer);
 int csv_get_width(CSV_BUFFER *bufer, size_t row);
 
-int csv_get_field(char *dest, CSV_BUFFER *src, 
-                size_t dest_len, size_t row, size_t entry);
+int csv_get_field(char *dest, size_t dest_len, 
+                CSV_BUFFER *source, size_t row, size_t entry);
 int csv_get_field_length(CSV_BUFFER *buffer, size_t row, size_t entry);
 
 int csv_copy_row(CSV_BUFFER *dest, int dest_row, 

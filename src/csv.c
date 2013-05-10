@@ -156,7 +156,7 @@ static int append_field(CSV_BUFFER *buffer, size_t row)
         int col = buffer->width[row];
 
         temp_field = realloc(buffer->field[row], 
-                (col + 1) * sizeof(CSV_FIELD*));
+                        (col + 1) * sizeof(CSV_FIELD*));
         if (temp_field == NULL) {
                 return 2;
         } else {
@@ -176,7 +176,7 @@ static int append_row(CSV_BUFFER *buffer)
         size_t row  = buffer->rows;
 
         temp_width = realloc(buffer->width, (buffer->rows + 1) * 
-                sizeof(size_t));
+                        sizeof(size_t));
         if (temp_width != NULL) { 
                 buffer->width = temp_width;
                 buffer->width[row] = 0;
@@ -185,7 +185,7 @@ static int append_row(CSV_BUFFER *buffer)
         }
 
         temp_field = realloc(buffer->field, (buffer->rows + 1) * 
-                sizeof(CSV_FIELD**));
+                        sizeof(CSV_FIELD**));
         if (temp_field != NULL) {
                 buffer->field = temp_field;
                 buffer->field[row] = NULL;
@@ -229,7 +229,7 @@ static int remove_last_field(CSV_BUFFER *buffer, size_t row)
         else {
                 destroy_field(buffer->field[row][entry]);
                 temp_row = realloc(buffer->field[row], entry
-                        * sizeof (CSV_FIELD*));
+                                * sizeof (CSV_FIELD*));
                 if (temp_row != NULL)
                         buffer->field[row] = temp_row;
                 else
@@ -255,9 +255,9 @@ static int remove_last_row(CSV_BUFFER *buffer)
         } 
 
         temp_field = realloc(buffer->field, (buffer->rows - 1) *
-                sizeof(CSV_FIELD**));
+                        sizeof(CSV_FIELD**));
         temp_width = realloc(buffer->width, (buffer->rows - 1) *
-                sizeof(size_t)); 
+                        sizeof(size_t)); 
         if (temp_width == NULL || temp_field == NULL)
                 return 1;
 
@@ -267,7 +267,7 @@ static int remove_last_row(CSV_BUFFER *buffer)
 
         return 0;
 }
- 
+
 CSV_BUFFER *csv_create_buffer()
 {
 
@@ -322,13 +322,13 @@ int csv_load(CSV_BUFFER *buffer, char *file_name)
 
                 if (!first) {
                         next = read_next_field(fp, 
-                                buffer->field_delim, buffer->text_delim,
-                                buffer->field[i][j-1]);
+                                        buffer->field_delim, buffer->text_delim,
+                                        buffer->field[i][j-1]);
                 }
 
                 if (next == 2) 
                         end = true;
-                
+
                 if (next == 1) {
                         if (append_row(buffer) != 0)
                                 return 2;
@@ -341,11 +341,11 @@ int csv_load(CSV_BUFFER *buffer, char *file_name)
                                 return 2;
                         j++;
                 }
-                
+
 
                 if (first) first = false;
         }
-        
+
         fclose(fp);
         return 0;
 }
@@ -361,43 +361,43 @@ int csv_save(char *file_name, CSV_BUFFER *buffer)
         char text_delim = buffer->text_delim;
         char field_delim = buffer->field_delim;
         for(i = 0; i < buffer->rows; i++) {
-        for(j = 0; j < buffer->width[i]; j++) {
-                chloc = strchr(buffer->field[i][j]->text, text_delim);
-                if(chloc == NULL)
-                        chloc = strchr(buffer->field[i][j]->text, field_delim);
-                if(chloc == NULL)
-                        chloc = strchr(buffer->field[i][j]->text, '\n');
-                /* if any of the above characters are found, chloc will be set
-                 * and we must use text deliminators.
-                 */
-                if(chloc != NULL) {
-                        fputc(text_delim, fp);
-                        for(k = 0; k < buffer->field[i][j]->length - 1; k++) {
-                                /* if there are any text delims in the string,
-                                 * we must escape them.
-                                 */
-                                if(buffer->field[i][j]->text[k] == text_delim)
-                                        fputc(text_delim, fp);
-                                fputc(buffer->field[i][j]->text[k], fp);
+                for(j = 0; j < buffer->width[i]; j++) {
+                        chloc = strchr(buffer->field[i][j]->text, text_delim);
+                        if(chloc == NULL)
+                                chloc = strchr(buffer->field[i][j]->text, field_delim);
+                        if(chloc == NULL)
+                                chloc = strchr(buffer->field[i][j]->text, '\n');
+                        /* if any of the above characters are found, chloc will be set
+                         * and we must use text deliminators.
+                         */
+                        if(chloc != NULL) {
+                                fputc(text_delim, fp);
+                                for(k = 0; k < buffer->field[i][j]->length - 1; k++) {
+                                        /* if there are any text delims in the string,
+                                         * we must escape them.
+                                         */
+                                        if(buffer->field[i][j]->text[k] == text_delim)
+                                                fputc(text_delim, fp);
+                                        fputc(buffer->field[i][j]->text[k], fp);
+                                }
+                                fputc(text_delim, fp);
+                                chloc = NULL;
+                        } else {
+                                fputs(buffer->field[i][j]->text, fp);
                         }
-                        fputc(text_delim, fp);
-                chloc = NULL;
-                } else {
-                        fputs(buffer->field[i][j]->text, fp);
+                        if(j < buffer->width[i] - 1)
+                                fputc(field_delim, fp);
+                        else if (i < buffer->rows - 1)
+                                fputc('\n', fp);
                 }
-                if(j < buffer->width[i] - 1)
-                        fputc(field_delim, fp);
-                else if (i < buffer->rows - 1)
-                        fputc('\n', fp);
-        }
         }
 
         fclose(fp);
         return 0;
 }
 
-int csv_get_field(char *dest, CSV_BUFFER *src, 
-        size_t dest_len, size_t row, size_t entry)
+int csv_get_field(char *dest, size_t dest_len, 
+        CSV_BUFFER *src, size_t row, size_t entry)
 {
         int i;
         if (dest_len == 0)
@@ -419,10 +419,10 @@ int csv_get_field(char *dest, CSV_BUFFER *src,
          * but strncpy will truncate it for us. 
          */
                 
-        strncpy(dest, src->field[row][entry]->text, dest_len-1);
-        dest[dest_len - 1] = '\0';
+        strncpy(dest, src->field[row][entry]->text, dest_len);
+        dest[dest_len + 1] = '\0';
 
-        if (src->field[row][entry]->length > dest_len)
+        if (src->field[row][entry]->length + 1 > dest_len)
                 return 1;
         if (src->field[row][entry]->length == 0)
                 return 2;
